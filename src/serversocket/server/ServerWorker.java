@@ -57,7 +57,7 @@ public class ServerWorker extends Thread {
 		bf = new BufferedReader(new InputStreamReader(clientInput));
 
 		clientOutput.write("Type \'help\' to get a list of all commands \n".getBytes());
-		while ((input = bf.readLine()) != null) {
+		while (!clientSocket.isClosed() &&(input = bf.readLine()) != null) {
 			tokens = input.split(" ", 3);
 			if (!(tokens.length < 3)) {
 				handleCommands(tokens);
@@ -74,9 +74,10 @@ public class ServerWorker extends Thread {
 				"login <Username> <Password> - Login as a user\n", "logout - Logs you out to main menu\n",
 				"list - Lists all online users\n", "message <Recipient> <Message> - Message someone\n",
 				"quit - Exit program\n" };
-		if ("Quit".equalsIgnoreCase(input))
+		if ("Quit".equalsIgnoreCase(input)) {
+			bf.close();
 			clientSocket.close();
-		else if ("Help".equalsIgnoreCase(input)) {
+		} else if ("Help".equalsIgnoreCase(input)) {
 			for (String helpCommand : helpCommands) {
 				clientOutput.write(helpCommand.getBytes());
 			}
