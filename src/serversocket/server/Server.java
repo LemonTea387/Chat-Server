@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import serversocket.user.User;
+import serversocket.models.User;
 
 public class Server extends Thread {
 	private ServerSocket serverSocket;
@@ -15,9 +15,8 @@ public class Server extends Thread {
 	private HashSet<String> usedUsernames = new HashSet<String>();
 	private HashMap<String, User> loginPairs = new HashMap<String, User>();
 	private HashSet<User> onlineUsers = new HashSet<User>();
-	
 
-	Server(int port) {
+	public Server(int port) {
 		final int PORT = port;
 		try {
 			serverSocket = new ServerSocket(PORT);
@@ -25,15 +24,22 @@ public class Server extends Thread {
 			e.printStackTrace();
 		}
 	}
+
 	@Override
 	public void run() {
+		handleConnections();
+		super.run();
+	}
+
+	// Handles all the accepting of connections
+	private void handleConnections() {
 		try {
 			while (true) {
 				System.out.println("Waiting...");
 				Socket clientSocket = serverSocket.accept();
 				// Initializes a server worker thread to handle each specific connection into
 				// server
-				ServerWorker worker = new ServerWorker(this,clientSocket);
+				ServerWorker worker = new ServerWorker(this, clientSocket);
 				worker.start();
 				serverWorkers.add(worker);
 				System.out.println("Accepted connections from " + clientSocket);
@@ -41,10 +47,7 @@ public class Server extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		super.run();
 	}
-
-
 
 	public ArrayList<ServerWorker> getServerWorkers() {
 		return serverWorkers;
@@ -57,15 +60,19 @@ public class Server extends Thread {
 	public HashMap<String, User> getLoginPairs() {
 		return loginPairs;
 	}
-	public void addLoginPairs(String key, User user) {
-		loginPairs.put(key, user);
-	}
-	public void addUsedUsernames(String username) {
-		usedUsernames.add(username);
-	}
+
 	public HashSet<User> getOnlineUsers() {
 		return onlineUsers;
 	}
+
+	public void addLoginPairs(String key, User user) {
+		loginPairs.put(key, user);
+	}
+
+	public void addUsedUsernames(String username) {
+		usedUsernames.add(username);
+	}
+
 	public void addOnlineUsers(User user) {
 		onlineUsers.add(user);
 	}

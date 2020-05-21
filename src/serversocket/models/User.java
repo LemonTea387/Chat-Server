@@ -1,10 +1,8 @@
-package serversocket.user;
-
-import java.util.Date;
+package serversocket.models;
 
 public class User {
 	private String username, password;
-	private Date lastLogin;
+	//private Date lastLogin;
 
 	public User(String username, String password) {
 		this.username = username;
