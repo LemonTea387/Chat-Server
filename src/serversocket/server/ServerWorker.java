@@ -140,8 +140,9 @@ public class ServerWorker extends Thread {
 		}
 		for (ServerWorker worker : serverWorkers) {
 			User user = worker.getLoggedIn();
-			if (user.getUsername().equalsIgnoreCase(recipientName) && onlineUsers.contains(user)) {
-				String messageBody = currentUser.getUsername() + " : " + message;
+			if (user.getUsername().equalsIgnoreCase(recipientName) 
+					&& onlineUsers.contains(user)) {
+				String messageBody ="message "+ currentUser.getUsername() + " : " + message;
 				worker.sendMessage(messageBody);
 				return true;
 			}
