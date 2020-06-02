@@ -59,6 +59,7 @@ public class ServerWorker extends Thread {
 		sendMessage("Type \'help\' to get a list of all commands");
 		while (!clientSocket.isClosed() && (input = bf.readLine().trim()) != null) {
 			tokens = input.split(" ", 3);
+			System.out.println(input);
 			if (!(tokens.length < 3)) {
 				handleCommands(tokens);
 			} else {
