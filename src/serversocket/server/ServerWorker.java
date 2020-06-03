@@ -59,7 +59,6 @@ public class ServerWorker extends Thread {
 		sendMessage("Type \'help\' to get a list of all commands");
 		while (!clientSocket.isClosed() && (input = bf.readLine().trim()) != null) {
 			tokens = input.split(" ", 3);
-			System.out.println(input);
 			if (!(tokens.length < 3)) {
 				handleCommands(tokens);
 			} else {
@@ -127,9 +126,9 @@ public class ServerWorker extends Thread {
 	private void handleLogin(String attribute, String content) throws IOException {
 		if ((loggedIn = verifyUser(attribute, content)) != null) {
 			server.addOnlineUsers(loggedIn);
-			sendMessage("Logged in as : " + loggedIn.getUsername());
+			sendMessage("Success");
 		} else
-			sendMessage("Try again!");
+			sendMessage("Failed");
 	}
 
 	// Messages a user that's online
