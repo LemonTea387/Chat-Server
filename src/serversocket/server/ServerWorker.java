@@ -191,6 +191,7 @@ public class ServerWorker extends Thread {
 	private void handleLogout() throws IOException {
 		if (loggedIn != null) {
 			sendMessage("Logged out user : " + loggedIn.getUsername());
+			broadcastMessage("Offline " + loggedIn.getUsername());
 			onlineUsers.remove(loggedIn);
 			loggedIn = null;
 		} else {
