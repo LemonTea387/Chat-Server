@@ -44,6 +44,22 @@ public class ServerWorker extends Thread {
 		clientOutput.write((message + "\n").getBytes());
 	}
 
+	// Quick accessible method to broadcast message to every logged in instance
+	public void broadcastMessage(String message){
+//		for (ServerWorker worker : serverWorkers) {
+//			worker.sendMessage("Online " + this.getLoggedIn().getUsername());
+//		}
+		serverWorkers.forEach((worker) -> {
+			if (worker.getLoggedIn() != null) {
+				try {
+					worker.sendMessage(message);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
 	// Ran initially and keeps running until quit flag is set
 	private void handleClients() throws IOException {
 		String input;
@@ -112,7 +128,7 @@ public class ServerWorker extends Thread {
 			handleRegisterUser(attribute, content);
 			break;
 		case "message":
-			if(!handleMessageUser(attribute, content)) {
+			if (!handleMessageUser(attribute, content)) {
 				sendMessage("User is offline/Message is not sent");
 			}
 			break;
@@ -127,6 +143,7 @@ public class ServerWorker extends Thread {
 		if ((loggedIn = verifyUser(attribute, content)) != null) {
 			server.addOnlineUsers(loggedIn);
 			sendMessage("Success");
+			broadcastMessage("Online " + attribute);
 		} else
 			sendMessage("Failed");
 	}
@@ -134,15 +151,14 @@ public class ServerWorker extends Thread {
 	// Messages a user that's online
 	private boolean handleMessageUser(String recipientName, String message) throws IOException {
 		User currentUser = this.getLoggedIn();
-		if(currentUser == null) {
+		if (currentUser == null) {
 			sendMessage("Not logged in!");
 			return false;
 		}
 		for (ServerWorker worker : serverWorkers) {
 			User user = worker.getLoggedIn();
-			if (user.getUsername().equalsIgnoreCase(recipientName) 
-					&& onlineUsers.contains(user)) {
-				String messageBody ="message "+ currentUser.getUsername() + " : " + message;
+			if (user.getUsername().equalsIgnoreCase(recipientName) && onlineUsers.contains(user)) {
+				String messageBody = "message " + currentUser.getUsername() + " : " + message;
 				worker.sendMessage(messageBody);
 				return true;
 			}
