@@ -41,6 +41,7 @@ public class ServerWorker extends Thread {
 
 	// Quick accessible method to send message through outputstream
 	public void sendMessage(String message) throws IOException {
+		clientOutput.flush();
 		clientOutput.write((message + "\n").getBytes());
 	}
 
@@ -50,7 +51,7 @@ public class ServerWorker extends Thread {
 //			worker.sendMessage("Online " + this.getLoggedIn().getUsername());
 //		}
 		serverWorkers.forEach((worker) -> {
-			if (worker.getLoggedIn() != null) {
+			if (worker.getLoggedIn() != null && worker.getLoggedIn() != this.getLoggedIn()) {
 				try {
 					worker.sendMessage(message);
 				} catch (IOException e) {
@@ -142,10 +143,13 @@ public class ServerWorker extends Thread {
 	private void handleLogin(String attribute, String content) throws IOException {
 		if ((loggedIn = verifyUser(attribute, content)) != null) {
 			server.addOnlineUsers(loggedIn);
+			System.out.println("Send success");
 			sendMessage("Success");
 			broadcastMessage("Online " + attribute);
-		} else
+		} else {
+			System.out.println("Send fail");
 			sendMessage("Failed");
+		}
 	}
 
 	// Messages a user that's online
