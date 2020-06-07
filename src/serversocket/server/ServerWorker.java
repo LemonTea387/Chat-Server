@@ -47,9 +47,6 @@ public class ServerWorker extends Thread {
 
 	// Quick accessible method to broadcast message to every logged in instance
 	public void broadcastMessage(String message){
-//		for (ServerWorker worker : serverWorkers) {
-//			worker.sendMessage("Online " + this.getLoggedIn().getUsername());
-//		}
 		serverWorkers.forEach((worker) -> {
 			if (worker.getLoggedIn() != null && worker.getLoggedIn() != this.getLoggedIn()) {
 				try {
@@ -72,8 +69,6 @@ public class ServerWorker extends Thread {
 		serverWorkers = server.getServerWorkers();
 		loginPairs = server.getLoginPairs();
 		bf = new BufferedReader(new InputStreamReader(clientInput));
-
-		sendMessage("Type \'help\' to get a list of all commands");
 		while (!clientSocket.isClosed() && (input = bf.readLine().trim()) != null) {
 			tokens = input.split(" ", 3);
 			if (!(tokens.length < 3)) {
@@ -143,11 +138,9 @@ public class ServerWorker extends Thread {
 	private void handleLogin(String attribute, String content) throws IOException {
 		if ((loggedIn = verifyUser(attribute, content)) != null) {
 			server.addOnlineUsers(loggedIn);
-			System.out.println("Send success");
 			sendMessage("Success");
 			broadcastMessage("Online " + attribute);
 		} else {
-			System.out.println("Send fail");
 			sendMessage("Failed");
 		}
 	}
